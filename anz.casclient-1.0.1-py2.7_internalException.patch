@@ -1,0 +1,37 @@
+--- /home/daniel/work/bdr/bdr.zopebuildout.staging/eggs/anz.casclient-1.0.1-py2.7.egg/anz/casclient/validationspecification.py_	2014-12-11 13:59:50.674518800 +0200
++++ /home/daniel/work/bdr/bdr.zopebuildout.staging/eggs/anz.casclient-1.0.1-py2.7.egg/anz/casclient/validationspecification.py	2014-12-11 14:02:14.928798879 +0200
+@@ -1,6 +1,8 @@
+ 
+ # python
+ from xml.dom import minidom as minidom
++from logging import getLogger
++LOG = getLogger( 'anz.casclient' )
+ 
+ # zope
+ from zope.interface import implements
+@@ -14,6 +16,7 @@
+ from anz.casclient.exceptions import TicketValidationException, \
+      InternalException, ConnectionException, InvalidProxyChainException
+ 
++LOG = getLogger( 'anz.ecasclient' )
+ class TicketValidator( object ):
+     ''' Validator that will confirm the validity of a supplied ticket.
+     '''
+@@ -159,7 +162,8 @@
+             
+             return Assertion( principal )
+         except Exception, e:
+-            raise InternalException( str(e) )
++            LOG.info(str(e))
++            return None
+ 
+ class Cas20ProxyTicketValidator( Cas20ServiceTicketValidator ):
+     ''' Extension Service Ticket validation to validate service tickets and
+@@ -184,6 +188,7 @@
+         assertion = super(Cas20ProxyTicketValidator, self).\
+                   parseResponseFromServer( response )
+         
++        if assertion:
+         self._validateProxyChain( response )
+         
+         return assertion
